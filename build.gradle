@@ -5,6 +5,8 @@ plugins {
 group = 'com.downyoutube.devauction'
 version = '1.0'
 
+libsDirName = '../../../Desktop/Server/Test Server 1.20.1/plugins'
+
 repositories {
     mavenCentral()
     maven {
@@ -15,10 +17,20 @@ repositories {
         name = "sonatype"
         url = "https://oss.sonatype.org/content/groups/public/"
     }
+    maven {
+        name = "placeholder-api"
+        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+    }
+    maven {
+        name = "Vault"
+        url 'https://jitpack.io'
+    }
 }
 
 dependencies {
     compileOnly "org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT"
+    compileOnly "me.clip:placeholderapi:2.11.3"
+    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
 }
 
 def targetJavaVersion = 17
