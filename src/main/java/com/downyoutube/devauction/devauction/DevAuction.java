@@ -24,7 +24,7 @@ public final class DevAuction extends JavaPlugin {
     @Override
     public void onEnable() {
         main = this;
-        loadResource(this, "config.yml");
+        //loadResource(this, "config.yml");
         getConfig().options().copyDefaults();
         saveDefaultConfig();
         placeholderHook = new PlaceholderHook();

@@ -25,7 +25,7 @@ message:
   time-format:
     second: "วินาที"
     minute: "นาที"
-    "hour": "ชั่วโมง"
+    hour: "ชั่วโมง"
 
 
 auction:
