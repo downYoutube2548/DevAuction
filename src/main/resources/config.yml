@@ -7,7 +7,7 @@ message:
   auction-already-bid: "&cคุณได้บิดของชิ้นนี้ไปแล้ว กรุณารอคนบิดคนต่อไป"
   auction-already-start: "&cการประมูลเปิดอยู่!"
   not-enough-money: "&cคุณมีเงินไม่มากพอสำหรับการบิด!"
-  auction-count-down: "&aการประมูล &f[&e{item}&f] &aจะจบลงใน &c{time} &e/auction bid [จำนวนเงิน]"
+  auction-count-down: "&aการประมูล &e{item} &aจะจบลงใน &c{time} &e/auction bid [จำนวนเงิน]"
   auction-few-count-down: "&aการประมูลจะจบลงใน &c{time}"
   auction-master-not-enough-money: "&cAuction Master ขณะนี้มีเงินไม่เพียงพอ ระบบจะยึดตามคนที่บิดสูงสุดคนก่อนเป็นหลัก"
   auction-master-offline: "&cAuction Master ได้ออกจากเซิฟไปแล้ว ระบบจะยึดตามคนที่บิดสูงสุดคนก่อนเป็นหลัก"
@@ -22,16 +22,37 @@ message:
   invalid-number: "&cกรุณาใส่ตัวเลขให้ถูกต้อง"
   no-permission: "&cคุณไม่สามารถใช้งานคำสั่งนี้ได้"
   placeholder-no-bidder: "&cยังไม่มีผู้ประมูล"
+  command-help: "\n&x&f&b&7&4&5&6&lA&x&f&a&8&b&5&d&lU&x&f&8&a&2&6&5&lC&x&f&7&b&9&6&c&lT&x&f&6&c&f&7&3&lI&x&f&4&e&6&7&b&lO&x&f&3&f&d&8&2&lN&7 » &eวิธีใช้งานคำสั่ง\n \n&d• &b/auction start &e[ราคาเริ่มต้น] &6[duration:[ระยะเวลา]] [scale:[สเกลราคาบิตขั้นต่ำ]] &7เริ่มการประมูลไอเท็มที่ถืออยู่\n&d• &b/auction end &6[ระยะเวลา] &7กำหนดระยะเวลาที่เหลือในการบิดรอบปัจจุบัน\n&d• &b/auction bid &e[ราคา] &7บิดราคาประมูล\n&d• &b/auction cancel &7ยกเลิกการประมูล\n&d• &b/auction view &7ดูตัวอย่างสินค้าประมูล\n&d• &b/auction reload &7รีโหลดการตั้งค่า\n "
+  reloaded-config: "&aรีโหลดการตั้งค่าเรียบร้อยแล้ว"
   time-format:
     second: "วินาที"
     minute: "นาที"
     hour: "ชั่วโมง"
+  auction-master-title:
+    title: " "
+    sub-title: "&fคุณกำลังจะได้ &b{item} &fในอีก &a{time}"
 
 
 auction:
   default-duration: 45
   default-scale: 10.0
   message-at-interval: [75, 60, 45, 30 ,15, 10]
+  auction-winner-commands:
+    - "mention 0 {player} 1 1 1 0.0625 0.2 1"
+    - "mention 1 {player} 2.5 180"
+    - "execute as {player} at @s run particle minecraft:totem_of_undying ~ ~ ~ 0 1 0 1 100 force {player}"
+    - "execute as {player} at @s run particle minecraft:end_rod ~ ~ ~ 0 1 0 0.25 100 force {player}"
+  auction-winner-sound:
+    - UI_TOAST_CHALLENGE_COMPLETE;100;0.7
+  auction-end-sound:
+    - ENTITY_PLAYER_LEVELUP;100;2
+  auction-start-sound:
+    - ENTITY_EXPERIENCE_ORB_PICKUP;100;1
+    - ENTITY_EXPERIENCE_ORB_PICKUP;100;1
+  auction-count-down-sound:
+    - ENTITY_EXPERIENCE_ORB_PICKUP;100;1
+  auction-few-count-down-sound:
+    - ENTITY_EXPERIENCE_ORB_PICKUP;100;2
 
 view-auction:
   title: "Auction Item"

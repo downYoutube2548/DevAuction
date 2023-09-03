@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
 import java.time.Duration;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,8 +25,18 @@ public class Utils {
     }
 
     public static String Format(Double input) {
-        DecimalFormat df = new DecimalFormat("#,####.##");
+        DecimalFormat df = new DecimalFormat("#,###.##");
         return df.format(input);
+    }
+
+    public static double getDoubleFromFormat(String input) throws NumberFormatException {
+        if (input.toLowerCase(Locale.ROOT).endsWith("m")) {
+            return Double.parseDouble(input.substring(0, input.length() - 1)) * 1000000;
+        } else if (input.toLowerCase(Locale.ROOT).endsWith("k")) {
+            return Double.parseDouble(input.substring(0, input.length() - 1)) * 1000;
+        } else {
+            return Double.parseDouble(input);
+        }
     }
 
     public static String getItemName(ItemStack item) {

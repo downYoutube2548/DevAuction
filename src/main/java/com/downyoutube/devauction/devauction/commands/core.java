@@ -6,12 +6,14 @@ import com.downyoutube.devauction.devauction.utils.ConfigManager;
 import com.downyoutube.devauction.devauction.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +21,7 @@ import java.util.Locale;
 
 public class core implements CommandExecutor, TabExecutor {
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender,@NotNull Command command,@NotNull String label, String[] args) {
 
         try {
             if (sender instanceof Player player) {
@@ -41,7 +43,7 @@ public class core implements CommandExecutor, TabExecutor {
 
                                 long duration = ConfigManager.getConfig().getLong("auction.default-duration");
                                 float scale = (float) ConfigManager.getConfig().getDouble("auction.default-scale");
-                                double price = Double.parseDouble(args[1]);
+                                double price = Utils.getDoubleFromFormat(args[1]);
 
                                 for (String arg : args) {
                                     if (arg.startsWith("duration:")) {
@@ -52,6 +54,13 @@ public class core implements CommandExecutor, TabExecutor {
                                 }
 
                                 Auction.start(item, price, scale, duration);
+
+                                for (Player players : Bukkit.getOnlinePlayers()) {
+                                    for (String sounds : ConfigManager.getConfig().getStringList("auction.auction-start-sound")) {
+                                        String[] sound = sounds.split(";");
+                                        players.playSound(players.getLocation(), Sound.valueOf(sound[0]), Float.parseFloat(sound[1]), Float.parseFloat(sound[2]));
+                                    }
+                                }
 
                                 Bukkit.broadcastMessage(ConfigManager.getMessage("message.auction-start", false)
                                         .replace("{item}", (item.getItemMeta().getDisplayName().equals("")) ? Utils.getItemName(item) : item.getItemMeta().getDisplayName())
@@ -65,6 +74,10 @@ public class core implements CommandExecutor, TabExecutor {
                         }
                     } else if (args[0].equalsIgnoreCase("end")) {
                         if (player.hasPermission("devauction.end")) {
+                            if (Auction.auction_item == null) {
+                                sender.sendMessage(ConfigManager.getMessage("message.auction-not-start", true));
+                                return false;
+                            }
                             Auction.auction_duration_remain = args.length >= 2 ? Long.parseLong(args[1]) : 0;
                         } else {
                             sender.sendMessage(ConfigManager.getMessage("message.no-permission", true));
@@ -86,22 +99,26 @@ public class core implements CommandExecutor, TabExecutor {
                                     }
                                 }
 
-                                double price = Double.parseDouble(args[1]);
 
-                                double last_price = Auction.auction_diamond.get(Auction.auction_diamond.size()-1);
-                                if (price < last_price + (last_price * Auction.auction_scale/100)) {
+                                double price = Utils.getDoubleFromFormat(args[1]);
+
+                                double last_price = Auction.auction_diamond.get(Auction.auction_diamond.size() - 1);
+                                if (price < last_price + (last_price * Auction.auction_scale / 100)) {
                                     sender.sendMessage(ConfigManager.getMessage("message.auction-bid-price", true)
-                                            .replace("{price}", Utils.Format(last_price + (last_price * Auction.auction_scale/100)))
+                                            .replace("{price}", Utils.Format(last_price + (last_price * Auction.auction_scale / 100)))
                                     );
                                     return false;
                                 }
-                                if (DevAuction.economy.getBalance(player) < price) { sender.sendMessage(ConfigManager.getMessage("message.not-enough-money", true)); return false; }
+                                if (DevAuction.economy.getBalance(player) < price) {
+                                    sender.sendMessage(ConfigManager.getMessage("message.not-enough-money", true));
+                                    return false;
+                                }
 
                                 Auction.bid(player, price);
                                 Bukkit.broadcastMessage(ConfigManager.getMessage("message.auction-bid-success", true)
                                         .replace("{player}", player.getName())
                                         .replace("{price}", Utils.Format(price))
-                                        .replace("{next price}", Utils.Format(price + (price * Auction.auction_scale/100)))
+                                        .replace("{next price}", Utils.Format(price + (price * Auction.auction_scale / 100)))
                                 );
                             } else {
                                 sender.sendMessage(ConfigManager.getMessage("message.syntax-error", true));
@@ -111,6 +128,11 @@ public class core implements CommandExecutor, TabExecutor {
                         }
                     } else if (args[0].equalsIgnoreCase("cancel")) {
                         if (player.hasPermission("devauction.cancel")) {
+                            if (Auction.auction_item == null) {
+                                sender.sendMessage(ConfigManager.getMessage("message.auction-not-start", true));
+                                return false;
+                            }
+
                             Bukkit.broadcastMessage(ConfigManager.getMessage("message.auction-cancelled", true));
                             Auction.end(0);
                         } else {
@@ -129,11 +151,19 @@ public class core implements CommandExecutor, TabExecutor {
                         } else {
                             sender.sendMessage(ConfigManager.getMessage("message.no-permission", true));
                         }
+                    } else if (args[0].equalsIgnoreCase("reload")) {
+                        if (sender.hasPermission("devauction.reload")) {
+                            DevAuction.main.reloadConfig();
+                            sender.sendMessage(ConfigManager.getMessage("message.reloaded-config", true));
+                        } else {
+                            sender.sendMessage(ConfigManager.getMessage("message.no-permission", true));
+                        }
                     } else {
                         sender.sendMessage(ConfigManager.getMessage("message.syntax-error", true));
                     }
+                } else {
+                    sender.sendMessage(ConfigManager.getMessage("message.command-help", false));
                 }
-
             } else {
                 sender.sendMessage(ChatColor.RED + "You must be player to execute this command.");
             }
@@ -145,7 +175,7 @@ public class core implements CommandExecutor, TabExecutor {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         List<String> output = new ArrayList<>();
 
         if (args.length == 1) {
@@ -155,6 +185,7 @@ public class core implements CommandExecutor, TabExecutor {
             if (sender.hasPermission("devauction.end")) completions.add("end");
             if (sender.hasPermission("devauction.cancel")) completions.add("cancel");
             if (sender.hasPermission("devauction.bid")) completions.add("bid");
+            if (sender.hasPermission("devauction.reload")) completions.add("reload");
 
             output = tabComplete(args[0], completions);
         } else if (args.length >= 2) {

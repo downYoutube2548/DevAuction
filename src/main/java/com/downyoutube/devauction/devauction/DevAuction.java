@@ -2,17 +2,11 @@ package com.downyoutube.devauction.devauction;
 
 import com.downyoutube.devauction.devauction.commands.core;
 import com.downyoutube.devauction.devauction.events.InvClick;
-import com.google.common.io.ByteStreams;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Objects;
 
 public final class DevAuction extends JavaPlugin {
@@ -44,25 +38,6 @@ public final class DevAuction extends JavaPlugin {
     @Override
     public void onDisable() {
         placeholderHook.unregister();
-    }
-
-    private static File loadResource(Plugin plugin, String resource) {
-        File folder = plugin.getDataFolder();
-        if (!folder.exists())
-            folder.mkdir();
-        File resourceFile = new File(folder, resource);
-        try {
-            //if (!resourceFile.exists()) {
-            resourceFile.createNewFile();
-            try (InputStream in = plugin.getResource(resource);
-                 OutputStream out = new FileOutputStream(resourceFile)) {
-                ByteStreams.copy(in, out);
-            }
-            //}
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return resourceFile;
     }
 
     private boolean setupEconomy() {
