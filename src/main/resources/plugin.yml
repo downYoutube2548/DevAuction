@@ -1,0 +1,4 @@
+name: DevAuction
+version: '${version}'
+main: com.downyoutube.devauction.devauction.DevAuction
+api-version: 1.20
